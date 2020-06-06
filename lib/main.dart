@@ -1,3 +1,5 @@
+import 'package:counterredux/redux/app_actions.dart';
+import 'package:counterredux/redux/app_state.dart';
 import 'package:counterredux/redux/app_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -13,64 +15,69 @@ class MyApp extends StatelessWidget {
         store: appStore,
         child: MaterialApp(
           title: 'Flutter Demo',
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
-            visualDensity: VisualDensity.adaptivePlatformDensity,
-          ),
           home: MyHomePage(title: 'Flutter Demo Home Page'),
         ));
-    // return MaterialApp(
-    //   title: 'Flutter Demo',
-    //   theme: ThemeData(
-    //     primarySwatch: Colors.blue,
-    //     visualDensity: VisualDensity.adaptivePlatformDensity,
-    //   ),
-    //   home: MyHomePage(title: 'Flutter Demo Home Page'),
-    // );
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends StatelessWidget{
   final String title;
   MyHomePage({Key key, this.title}) : super(key: key);
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-      print('$_counter');
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(title),
+        actions: <Widget>[
+          StoreConnector<AppState, int>(
+              converter: (store) => store.state.counter,
+              builder: (context, counter) {
+                return Text(
+                  '$counter',
+                );
+              },
+            )
+        ],
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Ao clicar o counter aumenta para:',
+              'Redux: Ao clicar o counter aumenta para:',
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+            StoreConnector<AppState, int>(
+              converter: (store) => store.state.counter,
+              builder: (context, counter) {
+                return Text(
+                  '$counter',
+                );
+              },
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+      FloatingActionButton(
+        onPressed: () {
+          StoreProvider.of<AppState>(context).dispatch(DecrementCounter());
+        },
+        tooltip: 'Decrement',
+        child: Icon(Icons.remove),
+      ),
+      SizedBox(width: 10,),
+      FloatingActionButton(
+        onPressed: () {
+          StoreProvider.of<AppState>(context).dispatch(IncrementCounter());
+        },
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ),
+        ],
+      )
     );
   }
 }
