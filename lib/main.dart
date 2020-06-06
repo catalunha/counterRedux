@@ -20,64 +20,63 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget{
+class MyHomePage extends StatelessWidget {
   final String title;
   MyHomePage({Key key, this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-        actions: <Widget>[
-          StoreConnector<AppState, int>(
-              converter: (store) => store.state.counter,
-              builder: (context, counter) {
-                return Text(
-                  '$counter',
-                );
-              },
-            )
-        ],
-      ),
-      body: Center(
-        child: Column(
+        appBar: AppBar(
+            title: StoreConnector<AppState, int>(
+          converter: (store) => store.state.counter,
+          builder: (context, counter) {
+            return Text(
+              '$title: $counter',
+            );
+          },
+        )),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'Redux: Ao clicar o counter aumenta para:',
+              ),
+              StoreConnector<AppState, int>(
+                converter: (store) => store.state.counter,
+                builder: (context, counter) {
+                  return Text(
+                    '$counter',
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+        floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'Redux: Ao clicar o counter aumenta para:',
-            ),
-            StoreConnector<AppState, int>(
-              converter: (store) => store.state.counter,
-              builder: (context, counter) {
-                return Text(
-                  '$counter',
-                );
+            FloatingActionButton(
+              onPressed: () {
+                StoreProvider.of<AppState>(context)
+                    .dispatch(DecrementCounter());
               },
+              tooltip: 'Decrement',
+              child: Icon(Icons.remove),
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            FloatingActionButton(
+              onPressed: () {
+                StoreProvider.of<AppState>(context)
+                    .dispatch(IncrementCounter());
+              },
+              tooltip: 'Increment',
+              child: Icon(Icons.add),
             ),
           ],
-        ),
-      ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-      FloatingActionButton(
-        onPressed: () {
-          StoreProvider.of<AppState>(context).dispatch(DecrementCounter());
-        },
-        tooltip: 'Decrement',
-        child: Icon(Icons.remove),
-      ),
-      SizedBox(width: 10,),
-      FloatingActionButton(
-        onPressed: () {
-          StoreProvider.of<AppState>(context).dispatch(IncrementCounter());
-        },
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ),
-        ],
-      )
-    );
+        ));
   }
 }
