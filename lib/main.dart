@@ -28,14 +28,15 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: StoreConnector<AppState, int>(
-          converter: (store) => store.state.counter,
-          builder: (context, counter) {
-            return Text(
-              '$title: $counter',
-            );
-          },
-        )),
+          title: StoreConnector<AppState, AppState>(
+            converter: (store) => store.state,
+            builder: (context, appState) {
+              return Text(
+                '$title: ${appState.counter}',
+              );
+            },
+          ),
+        ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -51,6 +52,12 @@ class MyHomePage extends StatelessWidget {
                   );
                 },
               ),
+              StoreConnector<AppState, int>(
+                converter: (store) => store.state.counterX,
+                builder: (context, counterX) {
+                  return Text('CounterX: $counterX');
+                },
+              )
             ],
           ),
         ),
