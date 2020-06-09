@@ -1,25 +1,26 @@
+import 'package:counterredux/redux/produts/products_state.dart';
+
 class AppState {
   final int counter;
-  final int counterX;
-
+  final ProductsState productsState;
   AppState({
     this.counter,
-    this.counterX,
+    this.productsState,
   });
   factory AppState.initialState() {
     return AppState(
       counter: 0,
-      counterX: 10,
+      productsState: ProductsState.initialState(),
     );
   }
 
   AppState copyWith({
     int counter,
-    int counterX,
+    ProductsState productsState,
   }) {
     return AppState(
       counter: counter ?? this.counter,
-      counterX: counterX ?? this.counterX,
+      productsState: productsState ?? this.productsState,
     );
   }
 }

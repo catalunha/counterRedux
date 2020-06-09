@@ -1,6 +1,7 @@
 import 'package:counterredux/redux/app_actions.dart';
 import 'package:counterredux/redux/app_state.dart';
 import 'package:counterredux/redux/app_store.dart';
+import 'package:counterredux/redux/produts/products_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
         store: appStore,
         child: MaterialApp(
           title: 'Flutter Demo',
-          home: MyHomePage(title: 'Flutter Demo Home Page'),
+          home: MyHomePage(title: 'Flutter counter'),
         ));
   }
 }
@@ -24,15 +25,19 @@ class MyHomePage extends StatelessWidget {
   final String title;
   MyHomePage({Key key, this.title}) : super(key: key);
 
+String _generationString(){
+  return DateTime.now().toString();
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: StoreConnector<AppState, AppState>(
-            converter: (store) => store.state,
-            builder: (context, appState) {
+          title: StoreConnector<AppState, List<String>>(
+            converter: (store) => store.state.productsState.products,
+            builder: (context, products) {
               return Text(
-                '$title: ${appState.counter}',
+                '$title. Products: ${products.length}',
               );
             },
           ),
@@ -52,10 +57,26 @@ class MyHomePage extends StatelessWidget {
                   );
                 },
               ),
-              StoreConnector<AppState, int>(
-                converter: (store) => store.state.counterX,
-                builder: (context, counterX) {
-                  return Text('CounterX: $counterX');
+              StoreConnector<AppState, List<String>>(
+                converter: (store) => store.state.productsState.products,
+                builder: (context, products) {
+                  if (products.isEmpty) {
+                    return Text('List is empty');
+                  }
+                  return Container(
+                    height:  MediaQuery.of(context).size.height/2,
+                    child: ListView.builder(
+                      itemCount: products.length,
+                      itemBuilder: (context, index) {
+                        final item = products.elementAt(index);
+                        print(item);
+                        return ListTile(
+                          title: Text('$item'),
+                          // subtitle: Text('${item.length}'),
+                        );
+                      },
+                    ),
+                  );
                 },
               )
             ],
@@ -79,6 +100,8 @@ class MyHomePage extends StatelessWidget {
               onPressed: () {
                 StoreProvider.of<AppState>(context)
                     .dispatch(IncrementCounter());
+                    StoreProvider.of<AppState>(context)
+                    .dispatch(AddProductsAction(_generationString()));
               },
               tooltip: 'Increment',
               child: Icon(Icons.add),
